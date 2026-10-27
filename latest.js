@@ -1,4 +1,4 @@
-/* VOIDWARE ASTRA — permanent latest.js (V1.0) — Astra Strike companion (2026-10-27)
+/* VOIDWARE ASTRA V2.0 — Astra Strike companion (2026-10-27)
  * Self-contained, no remote network calls. Press U to show/hide.
  * Interface and browser-side HUD/control tools are functional.
  * This is NOT a working aimbot, wallhack, anti-cheat bypass, or skin unlocker.
@@ -10,7 +10,7 @@ if(!/(\.|^)astrastrike\.fun$/i.test(location.hostname)){
   console.warn("[VOIDWARE ASTRA] Open astrastrike.fun first."); return;
 }
 try { window.VOIDWARE_ASTRA?.destroy(); } catch(_) {}
-const KEY="voidware.astra.v1.settings";
+const KEY="voidware.astra.v1.settings"; // reuse v1 settings to preserve all binds
 const defaults={
  menuHotkey:"KeyU", quickHotkey:"KeyJ", hudHotkey:"KeyH",
  activeTab:"Home", accent:"#a967ff", showReticle:false,
@@ -76,6 +76,7 @@ css.textContent=[
 "#toast{position:fixed;bottom:8%;left:50%;transform:translateX(-50%);display:none;background:#22153de8;color:#fff;border:1px solid #7554af;border-radius:9px;padding:9px 13px;font-size:12px}",
 "@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}#panel{top:2%;max-height:95vh}header strong{font-size:16px}}"
 ].join("\n");
+css.textContent += "\n/* VOIDWARE V19.1 STUDIO-style presentation */\n:host{--vw-bg:#0d0f14;--vw-raised:#181b23;--vw-line:#2a2d36}\n#panel{top:50%;left:50%;transform:translate(-50%,-50%);width:min(1200px,96vw);height:min(760px,94vh);\nmax-height:94vh;border:1px solid #373944;border-radius:9px;background:var(--vw-bg);\nbox-shadow:0 28px 90px #000b;display:flex;flex-direction:column;}\nheader{height:62px;min-height:62px;padding:0 22px;background:#14161d;border-bottom:1px solid #2a2d36;gap:12px;}\n.brand{display:flex;gap:12px;align-items:center}\n.brandmark{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;background:#282333;\nborder:1px solid #514667;color:#d6c5fb;font-weight:850;font-size:16px}\n.brand-title{font-size:15px;font-weight:820;letter-spacing:1.6px;color:#f3f1f9}\n.brand-title b{color:#b7a1f6}\n.brand-sub{font-size:9px;font-weight:540;color:#777d8e;margin-top:4px}\n.brand-right{display:flex;align-items:center;gap:10px}\n.status-pill{padding:6px 9px;border:1px solid #284c3e;background:#15251f;color:#7db89a;\nborder-radius:5px;font-size:10px;font-weight:650}\n.version-pill{padding:7px 10px;border:1px solid #323540;border-radius:5px;color:#b7a1f6;\nbackground:#1a1d26;font-size:10px}\nbutton{background:#1a1d26;border:1px solid #323540;border-radius:5px;color:#adb1bf;font-weight:650}\nbutton:hover{background:#262a34;border-color:#50515d;color:#f4f4f8}\nbutton.primary{background:#42315d;border-color:#7c66a6}\n#tabs{height:40px;min-height:40px;display:flex;gap:22px;align-items:center;flex-wrap:nowrap;overflow-x:auto;\npadding:0 20px;background:#111319;border-bottom:1px solid #22252e}\n#tabs button{height:39px;position:relative;border:0;background:none;border-radius:0;padding:0 1px;\ncolor:#9599a6;font-size:11px;font-weight:650;white-space:nowrap}\n#tabs button.active{background:none;color:#f5f3fc}\n#tabs button.active:after{content:\"\";position:absolute;bottom:0;left:0;right:0;height:2px;background:#a78bee}\n#subbar{height:46px;min-height:46px;display:flex;align-items:center;gap:8px;padding:0 20px;\nbackground:#0f1117;border-bottom:1px solid #22252e}\n#subnav{display:flex;gap:4px;min-width:0;align-items:center;flex:1;overflow-x:auto;scrollbar-width:none}\n#subnav::-webkit-scrollbar{display:none}\n#subnav button{height:31px;flex-shrink:0;border:1px solid transparent;background:transparent;border-radius:5px;\npadding:7px 11px;font-size:11px;font-weight:550;color:#9a9eac}\n#subnav button.active{background:#25222f;border-color:#494053;color:#e4ddf7;font-weight:680}\n#vw-search{min-width:100px;width:180px;max-width:25%;background:#181b23;border:1px solid #30333f;\nborder-radius:5px;height:30px;color:#eef0f4;font:500 11px Inter,Segoe UI,Arial,sans-serif;padding:4px 10px;outline:none}\n#vw-search:focus{border-color:#766499}\n#main{flex:1;min-height:0;overflow-y:auto;padding:25px 28px 32px;background:var(--vw-bg)}\n#page-title{font-size:19px;font-weight:740;color:#f0f1f5;margin:0 0 5px}\n.lead{font-size:11px;color:#858a9b;line-height:1.55;margin:0 0 20px}\n.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}\n.card{min-height:87px;padding:14px 13px;background:#12151b;border:1px solid #2a2d36;\nborder-radius:6px;box-shadow:none}\n.card:hover{background:#191c26;border-color:#41424f}\n.card h3{font-size:12px;font-weight:650;letter-spacing:0;color:#e7e8ed;margin:0 0 10px}\n.card p{font-size:10.3px;line-height:1.42;color:#888d9d;margin:7px 0 0}\n.field{font-size:11px;margin:8px 0}\n.field span{color:#c6c9d2}\ninput[type=range]{accent-color:#a67dff}\ninput[type=color]{cursor:pointer}\ninput[type=text],select{background:#0d1119;color:#f0f0fb;border:1px solid #353d50;\nborder-radius:6px;padding:8px;width:100%;max-width:155px;outline:none;font-size:11px}\ninput[type=text]:focus,select:focus{border-color:#a778ff}\nfooter{height:41px;min-height:41px;background:#0c0f17;border-top:1px solid #252b39;\npadding:0 20px;color:#778196;font-size:10px}\nfooter strong{color:#c5a4ff;font-weight:650}\n#reticle{z-index:2147483001}\n@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}#tabs{gap:13px}}\n@media(max-width:540px){.grid{grid-template-columns:1fr}#vw-search{width:110px}header{padding:0 10px}\n.brand-right .status-pill{display:none}#subbar{padding:0 8px}#main{padding:14px}}\n";
 shadow.appendChild(css);
 const panel=document.createElement("div");
 panel.id="panel";
@@ -92,7 +93,8 @@ document.head.appendChild(override);
 (document.body||document.documentElement).appendChild(root);
 let visible=true, toastTimer=null, drillTimer=null, drillReady=0, drillState="idle", runs=0;
 let measuredFPS=0, frames=0, lastFPS=performance.now(), rAF=0;
-const tabs=["Home","Legit","Rage","Visuals","Misc","Skins","Config","FPS"];
+const tabs=["Home","FPS","Rage","Legit","Visuals","Misc","Skins","Config"];
+let activeSub=0, searchTerm="";
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(cfg));}catch(_){}}
 function toast(msg){
@@ -201,10 +203,35 @@ function page(){
  default: return "";
  }
 }
+
+function applyCardFilters(){
+ const cards=[...panel.querySelectorAll("#main .card")];
+ cards.forEach((card,i)=>{
+  const chosen=activeSub===0||i===activeSub-1;
+  const matches=!searchTerm||card.textContent.toLowerCase().includes(searchTerm.toLowerCase());
+  card.style.display=chosen&&matches?"":"none";
+ });
+ const n=cards.filter(c=>c.style.display!=="none").length;
+ const empty=panel.querySelector("#nothing-found");
+ if(empty)empty.hidden=n>0;
+}
 function render(){
- panel.innerHTML='<header><div><strong>◈ VOIDWARE <span style="color:#b68aff">ASTRA</span></strong><small>V1.0 · LEGIT • RAGE • VISUALS • MISC • CONFIG</small></div>'+button("hide","✕ CLOSE")+'</header>'+
+ const markup=page();
+ const tmp=document.createElement("div");tmp.innerHTML=markup;
+ const headings=[...tmp.querySelectorAll(".card h3")].map(e=>e.textContent.trim());
+ if(activeSub>headings.length)activeSub=0;
+ panel.innerHTML=
+ '<header><div class="brand"><div class="brandmark">V</div><div><div class="brand-title">VOID<b>WARE</b> <span style="font-weight:400;color:#a4a5b1">ASTRA</span></div>'+
+ '<div class="brand-sub">VOIDWARE V2.0 · Studio edition · Astra Strike</div></div></div>'+
+ '<div class="brand-right"><span class="status-pill">● ASTRA READY</span><span class="version-pill">v2.0</span>'+button("hide","✕")+'</div></header>'+
  '<nav id="tabs">'+tabs.map(t=>'<button data-tab="'+t+'" class="'+(cfg.activeTab===t?"active":"")+'">'+t+'</button>').join("")+'</nav>'+
- '<section id="main">'+page()+'</section><footer><span>Press '+esc(cfg.menuHotkey)+' to toggle · Astra Strike</span><span class="warning">Combat cheats not enabled</span></footer>';
+ '<div id="subbar"><nav id="subnav">'+['All',...headings].map((t,i)=>'<button data-subtab="'+i+'" class="'+(activeSub===i?"active":"")+'">'+esc(t)+'</button>').join("")+'</nav>'+
+ '<input id="vw-search" type="search" aria-label="Search controls" placeholder="Search settings..." value="'+esc(searchTerm)+'"></div>'+
+ '<section id="main"><h2 id="page-title">'+esc(cfg.activeTab)+(cfg.activeTab==="FPS"?" Boost":"")+'</h2>'+markup+
+ '<p id="nothing-found" hidden style="color:#a9a0b9;padding:20px">No matching controls.</p></section>'+
+ '<footer><strong>READY · '+esc(cfg.activeTab.toUpperCase())+'</strong><span style="margin-left:auto">'+
+ esc(cfg.menuHotkey)+' MENU · '+esc(cfg.quickHotkey)+' RETICLE · '+esc(cfg.hudHotkey)+' HUD · LOCAL CONTROLS</span></footer>';
+ applyCardFilters();
 }
 function setVisible(next){
  visible=next;panel.classList.toggle("hidden",!visible);
@@ -212,7 +239,7 @@ function setVisible(next){
   try{document.exitPointerLock();}catch(_){}
  }
 }
-function setTab(t){if(tabs.includes(t)){cfg.activeTab=t;save();render();}}
+function setTab(t){if(tabs.includes(t)){cfg.activeTab=t;activeSub=0;searchTerm="";save();render();}}
 function getControlValue(el,key){
  if(el.type==="checkbox")return !!el.checked;
  if(el.type==="range")return Number(el.value);
@@ -220,6 +247,7 @@ function getControlValue(el,key){
 }
 panel.addEventListener("input",ev=>{
  const el=ev.target,key=el?.dataset?.key;
+ if(el.id==="vw-search"){searchTerm=el.value;activeSub=0;panel.querySelectorAll("#subnav button").forEach((b,i)=>b.classList.toggle("active",i===0));applyCardFilters();return;}
  if(!key||!(key in defaults))return;
  cfg[key]=getControlValue(el,key);
  apply();
@@ -268,7 +296,17 @@ importInput.addEventListener("change",async()=>{
  }catch(e){toast("Import failed: "+e.message);}
  importInput.value="";
 });
+panel.addEventListener("keydown",ev=>{
+  const el=ev.target;
+  if(el?.dataset?.key && /Hotkey$/.test(el.dataset.key)){
+   ev.preventDefault();ev.stopPropagation();
+   if(ev.code==="Escape")return;
+   cfg[el.dataset.key]=ev.code;save();render();toast("Hotkey set: "+ev.code);
+  }
+});
 panel.addEventListener("click",ev=>{
+ const sub=ev.target.closest("[data-subtab]");
+ if(sub){activeSub=Number(sub.dataset.subtab)||0;panel.querySelectorAll("#subnav button").forEach((b,i)=>b.classList.toggle("active",i===activeSub));applyCardFilters();return;}
  const tab=ev.target.closest("[data-tab]");
  if(tab){setTab(tab.dataset.tab);return;}
  const b=ev.target.closest("[data-action]");if(!b)return;
@@ -305,9 +343,9 @@ function destroy(){
  delete window.VOIDWARE_ASTRA;
 }
 window.VOIDWARE_ASTRA={
- version:"1.0",show:()=>setVisible(true),hide:()=>setVisible(false),
+ version:"2.0",show:()=>setVisible(true),hide:()=>setVisible(false),
  getConfig:()=>Object.assign({},cfg),destroy
 };
 render();apply();setVisible(true);rAF=requestAnimationFrame(frame);
-console.info("[VOIDWARE ASTRA] V1.0 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
+console.info("[VOIDWARE ASTRA] V2.0 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
 })();
