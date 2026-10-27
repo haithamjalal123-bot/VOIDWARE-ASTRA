@@ -1,4 +1,4 @@
-/* VOIDWARE ASTRA V2.1 — Astra Strike companion (2026-10-27)
+/* VOIDWARE ASTRA V2.2 — Astra Strike companion (2026-10-27)
  * Self-contained, no remote network calls. Press U to show/hide.
  * Interface and browser-side HUD/control tools are functional.
  * This is NOT a working aimbot, wallhack, anti-cheat bypass, or skin unlocker.
@@ -153,10 +153,13 @@ function page(){
  case "Home": return [
   '<p class="lead">ASTRA STRIKE EDITION · Astra-native HUD, controls and practice tools. Loaded on <b>'+esc(location.host)+'</b>.</p>',
   '<div class="grid">',
-  card("STATUS",'<div class="ok">Overlay connected</div><p>Measured FPS: <b id="fpsReadout">'+measuredFPS+'</b></p>',"Game combat engine: not connected."),
+  card("STATUS",'<div class="ok">Overlay connected</div><p>Measured FPS: <b id="fpsReadout">'+measuredFPS+'</b></p>',"Frontend UI connected · combat internals unverified."),
+  card("LIVE HEALTH / ARMOR",'<div>HP: <b data-hud="health">—</b> · Armor: <b data-hud="armor">—</b></div>',"Reads Astra's visible HUD, not private combat state."),
+  card("LIVE AMMO",'<div>Magazine: <b data-hud="ammo">—</b> · Reserve: <b data-hud="reserve">—</b></div>',"Updates while the game is running."),
+  card("MATCH TIMER / SCORE",'<div>Time: <b data-hud="timer">—</b></div><div>CT: <b data-hud="ctScore">—</b> · T: <b data-hud="tScore">—</b></div>',"Read-only native HUD telemetry."),
   card("MENU HOTKEY",'<div class="ok">'+esc(cfg.menuHotkey)+'</div>'+button("hide","Hide menu"),"Press U by default. Clicking back into game resumes pointer lock."),
   card("QUICK CONTROLS",'<div>'+esc(cfg.quickHotkey)+' = reticle</div><div>'+esc(cfg.hudHotkey)+' = minimal HUD</div>',"All hotkeys can be rebound."),
-  card("VERSION",'<div class="ok">V1.0</div>',"Independent Astra file. Original Clutcher VOIDWARE is untouched."),
+  card("VERSION",'<div class="ok">V2.2</div>',"Original Clutcher VOIDWARE remains separate."),
   '</div>'].join("");
  case "Legit": return '<p class="lead">Your precision setup. The reticle and native sensitivity controls work immediately.</p><div class="grid">'+
   card("CROSSHAIR",toggle("showReticle","Custom reticle")+toggle("hideNativeReticle","Hide Astra reticle")+toggle("reticleDot","Center dot"))+
@@ -216,8 +219,8 @@ function render(){
  if(activeSub>headings.length)activeSub=0;
  panel.innerHTML=
  '<header><div class="brand"><div class="brandmark">V</div><div><div class="brand-title">VOID<b>WARE</b> <span style="font-weight:400;color:#a4a5b1">ASTRA</span></div>'+
- '<div class="brand-sub">VOIDWARE V2.1 · Studio edition · Astra Strike</div></div></div>'+
- '<div class="brand-right"><span class="status-pill">● ASTRA READY</span><span class="version-pill">v2.1</span>'+button("hide","✕")+'</div></header>'+
+ '<div class="brand-sub">VOIDWARE V2.2 · Studio edition · Astra Strike</div></div></div>'+
+ '<div class="brand-right"><span class="status-pill">● ASTRA READY</span><span class="version-pill">v2.2</span>'+button("hide","✕")+'</div></header>'+
  '<nav id="tabs">'+tabs.map(t=>'<button data-tab="'+t+'" class="'+(cfg.activeTab===t?"active":"")+'">'+t+'</button>').join("")+'</nav>'+
  '<div id="subbar"><nav id="subnav">'+['All',...headings].map((t,i)=>'<button data-subtab="'+i+'" class="'+(activeSub===i?"active":"")+'">'+esc(t)+'</button>').join("")+'</nav>'+
  '<input id="vw-search" type="search" aria-label="Search controls" placeholder="Search settings..." value="'+esc(searchTerm)+'"></div>'+
@@ -324,10 +327,34 @@ function onKey(e){
  else if(e.code===cfg.hudHotkey){cfg.minimalUi=!cfg.minimalUi;apply();toast("Minimal HUD "+(cfg.minimalUi?"ON":"OFF"));}
 }
 window.addEventListener("keydown",onKey,true);
+// Astra's window.game resolves to the DOM node with id="game" on the tested build.
+// Do not treat that element as a player/bot API. Only read native HUD text.
+const hudIds={health:"hpVal",armor:"armorVal",ammo:"ammoVal",
+ reserve:"reserveVal",timer:"timer",ctScore:"ctScore",tScore:"tScore"};
+let lastHudRead=0;
+function readHudSnapshot(){
+ const out={};
+ for(const [key,id] of Object.entries(hudIds)){
+  const el=document.getElementById(id);
+  const v=el?.textContent?.trim().replace(/\\s+/g," ").slice(0,20);
+  out[key]=v||"—";
+ }
+ out.gameDomAlias=window.game===document.getElementById("game");
+ return out;
+}
+function updateHudBindings(){
+ if(!visible || cfg.activeTab!=="Home")return;
+ const values=readHudSnapshot();
+ for(const [key,value] of Object.entries(values)){
+  const el=panel.querySelector('[data-hud="'+key+'"]');
+  if(el)el.textContent=value;
+ }
+}
 function frame(t){
  frames++;if(t-lastFPS>1000){measuredFPS=Math.round(frames*1000/(t-lastFPS));frames=0;lastFPS=t;
   const e=panel.querySelector("#fpsReadout");if(e)e.textContent=String(measuredFPS);
  }
+ if(t-lastHudRead>250){lastHudRead=t;updateHudBindings();}
  rAF=requestAnimationFrame(frame);
 }
 function destroy(){
@@ -337,9 +364,9 @@ function destroy(){
  delete window.VOIDWARE_ASTRA;
 }
 window.VOIDWARE_ASTRA={
- version:"2.1",show:()=>setVisible(true),hide:()=>setVisible(false),
- getConfig:()=>Object.assign({},cfg),destroy
+ version:"2.2",show:()=>setVisible(true),hide:()=>setVisible(false),
+ getConfig:()=>Object.assign({},cfg),readHudSnapshot,destroy
 };
 render();apply();setVisible(true);rAF=requestAnimationFrame(frame);
-console.info("[VOIDWARE ASTRA] V2.1 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
+console.info("[VOIDWARE ASTRA] V2.2 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
 })();
