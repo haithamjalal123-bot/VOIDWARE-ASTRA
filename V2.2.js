@@ -336,7 +336,7 @@ function readHudSnapshot(){
  const out={};
  for(const [key,id] of Object.entries(hudIds)){
   const el=document.getElementById(id);
-  const v=el?.textContent?.trim().replace(/\\s+/g," ").slice(0,20);
+  const v=el?.textContent?.trim().replace(/\s+/g," ").slice(0,20);
   out[key]=v||"—";
  }
  out.gameDomAlias=window.game===document.getElementById("game");
