@@ -1,4 +1,4 @@
-/* VOIDWARE ASTRA V2.0 — Astra Strike companion (2026-10-27)
+/* VOIDWARE ASTRA V2.1 — Astra Strike companion (2026-10-27)
  * Self-contained, no remote network calls. Press U to show/hide.
  * Interface and browser-side HUD/control tools are functional.
  * This is NOT a working aimbot, wallhack, anti-cheat bypass, or skin unlocker.
@@ -148,10 +148,6 @@ function card(title,body,desc){
  return '<div class="card"><h3>'+title+'</h3>'+body+(desc?'<p>'+desc+'</p>':'')+'</div>';
 }
 function button(action,label){return '<button data-action="'+action+'">'+label+'</button>';}
-function disabledFeatures(label){
- return card(label,'<div class="warning" style="font-size:12px">Not connected to Astra combat engine</div>',
- "Would require a tested, game-specific integration. No fake switches.");
-}
 function page(){
  switch(cfg.activeTab){
  case "Home": return [
@@ -167,13 +163,11 @@ function page(){
   card("RETICLE SHAPE",range("reticleSize","Length",2,20,1)+range("reticleGap","Gap",1,18,1))+
   card("RETICLE STYLE",range("reticleThickness","Thickness",1,7,1)+color("reticleColor","Color"))+
   card("NATIVE SENSITIVITY",range("sensitivity","Sensitivity",.2,5,.05),"Uses Astra's existing settings input.")+
-  disabledFeatures("AIM ASSIST / SMOOTH FLICK")+
-  disabledFeatures("TRIGGER / RECOIL CONTROL")+'</div>';
- case "Rage": return '<p class="lead">Rage lab: reaction training is functional. Gameplay cheats need a separate combat-engine adapter.</p><div class="grid">'+
+  '</div>';
+ case "Rage": return '<p class="lead">Reaction training and target practice tools.</p><div class="grid">'+
   card("REACTION CHALLENGE",'<p id="drillState">Click Start, then hit STOP when this turns green.</p>'+button("drill","START / STOP")+'<p>Best: '+(cfg.reactionBest===null?"—":cfg.reactionBest+" ms")+'</p>',"Local drill; does not affect opponents.")+
   card("TARGET PRACTICE",'<div>Press your own shoot key in-game while watching the reticle.</div>',"Use Astra's built-in bot modes for practice.")+
-  disabledFeatures("AIMBOT / SILENT AIM")+
-  disabledFeatures("ESP / WALLBANG / AUTO-WIN")+'</div>';
+  '</div>';
  case "Visuals": return '<p class="lead">All toggles below modify visible HUD elements, not enemy visibility through walls.</p><div class="grid">'+
   card("HUD",toggle("hideKillfeed","Hide killfeed")+toggle("hideRadar","Hide radar"))+
   card("EFFECTS",toggle("hideDamageFx","Hide damage flash")+toggle("dimScope","Dim scope overlay"))+
@@ -222,8 +216,8 @@ function render(){
  if(activeSub>headings.length)activeSub=0;
  panel.innerHTML=
  '<header><div class="brand"><div class="brandmark">V</div><div><div class="brand-title">VOID<b>WARE</b> <span style="font-weight:400;color:#a4a5b1">ASTRA</span></div>'+
- '<div class="brand-sub">VOIDWARE V2.0 · Studio edition · Astra Strike</div></div></div>'+
- '<div class="brand-right"><span class="status-pill">● ASTRA READY</span><span class="version-pill">v2.0</span>'+button("hide","✕")+'</div></header>'+
+ '<div class="brand-sub">VOIDWARE V2.1 · Studio edition · Astra Strike</div></div></div>'+
+ '<div class="brand-right"><span class="status-pill">● ASTRA READY</span><span class="version-pill">v2.1</span>'+button("hide","✕")+'</div></header>'+
  '<nav id="tabs">'+tabs.map(t=>'<button data-tab="'+t+'" class="'+(cfg.activeTab===t?"active":"")+'">'+t+'</button>').join("")+'</nav>'+
  '<div id="subbar"><nav id="subnav">'+['All',...headings].map((t,i)=>'<button data-subtab="'+i+'" class="'+(activeSub===i?"active":"")+'">'+esc(t)+'</button>').join("")+'</nav>'+
  '<input id="vw-search" type="search" aria-label="Search controls" placeholder="Search settings..." value="'+esc(searchTerm)+'"></div>'+
@@ -343,9 +337,9 @@ function destroy(){
  delete window.VOIDWARE_ASTRA;
 }
 window.VOIDWARE_ASTRA={
- version:"2.0",show:()=>setVisible(true),hide:()=>setVisible(false),
+ version:"2.1",show:()=>setVisible(true),hide:()=>setVisible(false),
  getConfig:()=>Object.assign({},cfg),destroy
 };
 render();apply();setVisible(true);rAF=requestAnimationFrame(frame);
-console.info("[VOIDWARE ASTRA] V2.0 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
+console.info("[VOIDWARE ASTRA] V2.1 loaded. U opens menu; J reticle; H HUD. Local visuals/settings; combat cheats not connected.");
 })();
